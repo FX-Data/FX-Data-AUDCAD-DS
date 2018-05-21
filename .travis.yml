@@ -1,0 +1,70 @@
+language: python
+python:
+- '3.4'
+env:
+  matrix:
+    - FORMAT=hst TF=M1
+    - FORMAT=hst TF=M2
+    - FORMAT=hst TF=M3
+    - FORMAT=hst TF=M4
+    - FORMAT=hst TF=M5
+    - FORMAT=hst TF=M6
+    - FORMAT=hst TF=M10
+    - FORMAT=hst TF=M12
+    - FORMAT=hst TF=M15
+    - FORMAT=hst TF=M20
+    - FORMAT=hst TF=M30
+    - FORMAT=hst TF=H1
+    - FORMAT=hst TF=H2
+    - FORMAT=hst TF=H3
+    - FORMAT=hst TF=H4
+    - FORMAT=hst TF=H6
+    - FORMAT=hst TF=H8
+    - FORMAT=hst TF=H12
+    - FORMAT=hst TF=D1
+    - FORMAT=hst TF=W1
+    - FORMAT=hst TF=MN1
+    - FORMAT=fxt TF=M1
+    - FORMAT=fxt TF=M5
+    - FORMAT=fxt TF=M15
+    - FORMAT=fxt TF=M30
+    - FORMAT=fxt TF=H1
+    - FORMAT=fxt TF=H4
+    - FORMAT=fxt TF=D1
+    - FORMAT=fxt TF=W1
+    - FORMAT=fxt TF=MN1
+addons:
+  apt:
+    packages:
+    - realpath
+    - pv
+notifications:
+  email: false
+before_install:
+- set -e
+install: 
+before_script:
+- curl -o Makefile https://raw.githubusercontent.com/FX31337/FX-BT-Data-Test/master/Makefile
+script:
+- make $FORMAT
+after_success: 
+after_failure:
+- sudo apt-get -qy install tree && tree -d -L 6
+- env
+after_script:
+- pwd
+deploy:
+  provider: releases
+  api_key:
+    secure: "Sd6+GGgkOK7uLtyPSxWkEiMzM507OV2Gmt3cAjoJulBk8KcYQCe3NmZK06Whlm/3cf7emaGM1vtk4XOmGlDwSYLsbqSxzPKGTG6VNS7Gj5m8O0+87R8RWM9+wxH2u1lwBszYy3+WeC9oHpPl8G2NXA+jEhKcVi0cLCpJzoR8Bz37XXKbEHadSKV6y+cpDk97dsHAox++FSpVGDCR8JJAddidh8E5tuOjZR5Xv90dT3FNQsgRm6p1+zB+moKxq7bvtC1BZ9BpCISqAnmtydR2QpELXMvCTi/Ur3uQ2fMNoi4Q/O6HXsm5OpeJxj88miGcascrlBmdj4BpMN2y3ssp7mdA0IKeIMi9PXZyPgG35NOJOp7sOT0GWf8AW9Wc9+MvmgGunDOiEoBLkWw0dZeTp4F2FcHwd1TxKrNGDV0t5Hf3E3IE84VB8VRLzUnRnLh+fhPQ3Y1RJOParpKc+VNvDAIbJygOFNL3A40uIUZQ28o0r+qTIwx/k+NgorAr6Tf2wNywTVZPoOuevPo4xV718ebCOhyCxOmfFFEIkTlzpVXTSmfxVfcDPH3BJOjGb07JshKtz68u+ehQCIkIBuEFm/2PoxRjjQ5mgpa89EtMegKd16fdUFhcTYgpNoIqs8cXbs9kDpL6lUXWJckQ9cB2zMTCItwOSgUE4Fsl8VrLlAw="
+  file:
+    - "*.hst.gz"
+    - "*.fxt.gz"
+  file_glob: true
+  skip_cleanup: true
+  overwrite: true
+  on:
+    repo: FX31337/FX-BT-Data-AUDCAD-DS
+    tags: true
+after_deploy:
+- make clean
